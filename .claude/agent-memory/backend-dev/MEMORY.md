@@ -1,0 +1,1 @@
+- [Project Architecture](project-architecture.md) — Clean Architecture layer structure, path alias `@/*` → repo root, key conventions for GitHub Trends Dashboard

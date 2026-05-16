@@ -1,0 +1,2 @@
+- [Project Overview](project-overview.md) — GitHub Trends Dashboard: Next.js 16.2.6, React 19, TS5, Tailwind v4, Clean Architecture
+- [Review Findings](review-findings.md) — Key patterns and issues found in the initial code review

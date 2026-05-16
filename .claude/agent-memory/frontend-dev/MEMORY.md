@@ -1,0 +1,1 @@
+- [Project Design System](project-design-system.md) — Colour tokens, typography, component patterns, a11y conventions, and Next.js 16 gotchas for the GitHub Trends Dashboard
