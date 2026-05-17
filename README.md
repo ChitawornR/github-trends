@@ -34,20 +34,22 @@ pnpm exec tsc --noEmit   # type check
 
 ### GitHub API rate limits
 
-The app works **without authentication**, but the GitHub API then allows only
-**60 requests/hour** (and 10 search requests/minute). Because the dashboard issues one
-search call per candidate language plus several more, an unauthenticated session can
-exhaust the quota quickly — when that happens the UI shows a dedicated **rate-limit
-state** with the reset time.
+The app uses GitHub API version **`2026-03-10`**, which **requires authentication for
+all requests**. You must supply a GitHub personal access token — without it, the API
+returns `401 Unauthorized`.
 
-To get the full **5,000 requests/hour**, create a
-[GitHub personal access token](https://github.com/settings/tokens) (no scopes needed —
-a classic token with no scopes or a fine-grained token with public read access is
-enough) and put it in `.env`:
+Create a [GitHub personal access token](https://github.com/settings/tokens) (no scopes
+needed — a classic token with no scopes or a fine-grained token with public read access
+is enough) and put it in `.env`:
 
 ```
 GITHUB_TOKEN=ghp_your_token_here
 ```
+
+An authenticated token gives you **5,000 requests/hour**. Because the dashboard issues
+one search call per candidate language plus several more, the quota can be exhausted
+if you restart the server frequently or skip caching. When that happens the UI shows a
+dedicated **rate-limit state** with the reset time.
 
 The token is read **only on the server** (in `src/di/container.ts`) and is never sent
 to the browser.
@@ -77,7 +79,7 @@ being meaningful.
 
 ### Which API endpoints are used, and why
 
-Base URL `https://api.github.com`, version header `2022-11-28`.
+Base URL `https://api.github.com`, version header `2026-03-10`.
 
 | Feature | Endpoint | Why this endpoint |
 |---|---|---|
@@ -85,7 +87,7 @@ Base URL `https://api.github.com`, version header `2022-11-28`.
 | Top repositories | `GET /search/repositories?q=stars:>50000&sort=stars&order=desc` | The Search API is the only endpoint that can rank repositories globally by stars. The `stars:>50000` floor keeps the result set small and fast. |
 | Trending | `GET /search/repositories?q=created:>{date}&sort=stars&order=desc` | The `created:` qualifier is the only way to date-filter repositories server-side; combined with `sort=stars` it directly expresses our "trending" definition. |
 | Search — full repo (`owner/repo`) | `GET /repos/{owner}/{repo}` | The canonical, exact lookup for a single repository — richer and cheaper than a search query. |
-| Search — user / organisation | `GET /users/{name}`, then `GET /search/repositories?q=user:{name}&sort=stars` | `/users/{name}` resolves both users and organisations and tells us which it is. `q=user:` then lists their repositories ranked by stars in one call. |
+| Search — user / organisation | `GET /users/{name}`, then `GET /search/repositories?q=user:{name}&sort=stars` + `GET /search/repositories?q={name}+in:name&sort=stars` | `/users/{name}` resolves both users and organisations. The user's repos are fetched by `q=user:`, and a parallel name-search finds repositories _named_ like the query that aren't owned by that user — so a same-named account never hides unrelated repos. |
 | Search — repository name | `GET /search/repositories?q={term}+in:name&sort=stars` | Fallback when the input is not a user/org: `in:name` matches the term against repository names, ranked by stars so the best-known matches surface first. |
 
 **Why the Search API does most of the work:** it is the single GitHub endpoint that can
