@@ -12,6 +12,8 @@ interface SearchResultsProps {
   ownerViewModel?: OwnerViewModel
   /** Pre-mapped single repo view model (only for repo-detail kind) */
   repoViewModel?: RepositoryViewModel
+  /** Repos matching the query by name, not owned by the matched owner (owner-repos kind) */
+  nameMatchViewModels?: RepositoryViewModel[]
 }
 
 export function SearchResults({
@@ -19,6 +21,7 @@ export function SearchResults({
   repoViewModels,
   ownerViewModel,
   repoViewModel,
+  nameMatchViewModels = [],
 }: SearchResultsProps) {
   if (result.kind === 'repo-detail' && repoViewModel) {
     return (
@@ -75,6 +78,20 @@ export function SearchResults({
             emptyMessage="This user has no public repositories."
           />
         </div>
+
+        {/* Other repos that match the query by name */}
+        {nameMatchViewModels.length > 0 && (
+          <div>
+            <h2 className="mb-4 text-base font-semibold text-white">
+              Repositories named &ldquo;{ownerViewModel.login}&rdquo; ({nameMatchViewModels.length})
+            </h2>
+            <RepositoryList
+              repos={nameMatchViewModels}
+              label={`Repositories named ${ownerViewModel.login}`}
+              emptyMessage="No repositories matched this name."
+            />
+          </div>
+        )}
       </div>
     )
   }

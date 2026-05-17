@@ -22,7 +22,8 @@ type SearchError = InvalidInputError | NotFoundError | RateLimitError | Internal
  *    - 404 → NotFoundError
  *    - Success → kind `repo-detail`
  * 3. Otherwise, attempt `/users/{input}`:
- *    - 200 → kind `owner-repos` (owner + their repos)
+ *    - 200 → kind `owner-repos` (owner + their repos + other repos named like the
+ *            query, so a repo never gets hidden behind a same-named account)
  *    - 404 → fall through to step 4
  * 4. Repo-name search → kind `repo-list`. Empty `items` is NOT an error —
  *    callers render the empty state.
@@ -83,11 +84,18 @@ export class SearchUseCase {
       const owner = await this.githubRepo.getUserOrOrg(query)
 
       if (owner !== null) {
-        const repos = await this.githubRepo.getRepositoriesByUser(query)
+        const [repos, nameMatches] = await Promise.all([
+          this.githubRepo.getRepositoriesByUser(query),
+          this.githubRepo.searchRepositoriesByName(query),
+        ])
+        const ownedIds = new Set(repos.map((r) => r.id))
         return ok({
           kind: 'owner-repos',
           owner: toOwnerDto(owner),
           repositories: repos.map(toRepositoryDto),
+          nameMatches: nameMatches
+            .filter((r) => !ownedIds.has(r.id))
+            .map(toRepositoryDto),
         })
       }
     } catch (cause) {

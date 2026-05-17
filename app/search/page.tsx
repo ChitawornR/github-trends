@@ -140,6 +140,11 @@ async function SearchResultsSection({ query }: { query: string }) {
       ? toOwnerViewModel(searchResult.owner)
       : undefined
 
+  const nameMatchViewModels =
+    searchResult.kind === 'owner-repos'
+      ? searchResult.nameMatches.map(toRepositoryViewModel)
+      : []
+
   // Empty repo-list
   if (searchResult.kind === 'repo-list' && searchResult.repositories.length === 0) {
     return (
@@ -156,6 +161,7 @@ async function SearchResultsSection({ query }: { query: string }) {
       repoViewModels={repoViewModels}
       ownerViewModel={ownerViewModel}
       repoViewModel={repoViewModel}
+      nameMatchViewModels={nameMatchViewModels}
     />
   )
 }
