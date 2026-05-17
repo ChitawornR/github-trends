@@ -13,7 +13,7 @@ export interface RepositoryViewModel {
   readonly forksFormatted: string
   readonly forksRaw: number
   readonly language: string | null
-  readonly lastUpdated: string
+  readonly updatedAt: string
   readonly htmlUrl: string
   readonly topics: readonly string[]
   readonly openIssuesCount: number

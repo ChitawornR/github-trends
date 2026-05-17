@@ -1,4 +1,5 @@
 import type { RepositoryViewModel } from '@/src/presentation/view-models/repository.view-model'
+import { formatRelativeDate } from '@/src/presentation/mappers/repository.mapper'
 import { StatBadge } from '@/src/presentation/components/common/StatBadge'
 
 interface RepositoryDetailProps {
@@ -105,7 +106,9 @@ export function RepositoryDetail({ repo }: RepositoryDetailProps) {
             {repo.language}
           </span>
         )}
-        <span className="text-sm text-[#98989D]">Updated {repo.lastUpdated}</span>
+        <span className="text-sm text-[#98989D]" suppressHydrationWarning>
+          Updated {formatRelativeDate(repo.updatedAt)}
+        </span>
       </div>
 
       {/* Topics */}

@@ -13,7 +13,7 @@ function formatCount(n: number): string {
 }
 
 /** Returns a relative "last updated" label (e.g. "3 days ago", "2 months ago"). */
-function formatRelativeDate(isoString: string): string {
+export function formatRelativeDate(isoString: string): string {
   const date = new Date(isoString)
   const now = new Date()
   const diffMs = now.getTime() - date.getTime()
@@ -55,7 +55,7 @@ export function toRepositoryViewModel(dto: RepositoryDto): RepositoryViewModel {
     forksFormatted: formatCount(dto.forks),
     forksRaw: dto.forks,
     language: dto.language,
-    lastUpdated: formatRelativeDate(dto.updatedAt),
+    updatedAt: dto.updatedAt,
     htmlUrl: dto.htmlUrl,
     topics: dto.topics,
     openIssuesCount: dto.openIssuesCount,

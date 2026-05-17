@@ -1,8 +1,8 @@
 /** Base URL for all GitHub REST API v3 calls. */
 export const GITHUB_API_BASE = 'https://api.github.com' as const
 
-/** GitHub API version header value (stable as of 2022-11-28). */
-export const GITHUB_API_VERSION = '2022-11-28' as const
+/** GitHub API version header value (stable as of 2026-03-10). */
+export const GITHUB_API_VERSION = '2026-03-10' as const
 
 /**
  * The ten candidate languages tracked by the Top Languages feature.

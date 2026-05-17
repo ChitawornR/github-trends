@@ -1,4 +1,5 @@
 import type { RepositoryViewModel } from '@/src/presentation/view-models/repository.view-model'
+import { formatRelativeDate } from '@/src/presentation/mappers/repository.mapper'
 import { StatBadge } from '@/src/presentation/components/common/StatBadge'
 
 interface RepositoryCardProps {
@@ -114,9 +115,13 @@ export function RepositoryCard({ repo }: RepositoryCardProps) {
           </span>
         )}
 
-        {/* Last updated */}
-        <span className="ml-auto text-xs text-[#98989D]" title={`Updated ${repo.lastUpdated}`}>
-          Updated {repo.lastUpdated}
+        {/* Last updated — suppressHydrationWarning: relative time legitimately differs between SSR and client */}
+        <span
+          className="ml-auto text-xs text-[#98989D]"
+          title={`Updated ${formatRelativeDate(repo.updatedAt)}`}
+          suppressHydrationWarning
+        >
+          Updated {formatRelativeDate(repo.updatedAt)}
         </span>
       </div>
     </article>
