@@ -1,5 +1,6 @@
 import type { LanguageStatDto } from '@/src/application/dtos/language-stat.dto'
 import type { LanguageStatViewModel } from '@/src/presentation/view-models/language-stat.view-model'
+import { formatCount } from '@/src/presentation/utils/format'
 
 /**
  * Fixed palette of muted, accessible colours for the chart.
@@ -18,12 +19,6 @@ const PALETTE = [
   '#AC8EE3', // lavender
 ] as const
 
-/** Formats a raw number into a compact string (e.g. 1234567 → "1.2m"). */
-function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}m`
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k`
-  return String(n)
-}
 
 export function toLanguageStatViewModel(
   dto: LanguageStatDto,

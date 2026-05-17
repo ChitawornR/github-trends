@@ -124,7 +124,6 @@ async function SearchResultsSection({ query }: { query: string }) {
 
   const searchResult = result.value
 
-  // Map view models once server-side
   const repoViewModels =
     searchResult.kind === 'repo-detail'
       ? []
@@ -145,7 +144,6 @@ async function SearchResultsSection({ query }: { query: string }) {
       ? searchResult.nameMatches.map(toRepositoryViewModel)
       : []
 
-  // Empty repo-list
   if (searchResult.kind === 'repo-list' && searchResult.repositories.length === 0) {
     return (
       <StateMessage
@@ -157,7 +155,7 @@ async function SearchResultsSection({ query }: { query: string }) {
 
   return (
     <SearchResults
-      result={searchResult}
+      kind={searchResult.kind}
       repoViewModels={repoViewModels}
       ownerViewModel={ownerViewModel}
       repoViewModel={repoViewModel}

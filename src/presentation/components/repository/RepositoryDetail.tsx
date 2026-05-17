@@ -1,5 +1,5 @@
 import type { RepositoryViewModel } from '@/src/presentation/view-models/repository.view-model'
-import { formatRelativeDate } from '@/src/presentation/mappers/repository.mapper'
+import { formatRelativeDate } from '@/src/presentation/utils/format'
 import { StatBadge } from '@/src/presentation/components/common/StatBadge'
 
 interface RepositoryDetailProps {
