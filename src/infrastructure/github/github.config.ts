@@ -33,8 +33,8 @@ export const REVALIDATE = {
 
 /** Number of results to request per paginated endpoint. */
 export const PER_PAGE = {
-  TOP_REPOS: 20,
-  TRENDING_REPOS: 20,
+  TOP_REPOS: 10,
+  TRENDING_REPOS: 10,
   USER_REPOS: 30,
   SEARCH_REPOS: 30,
 } as const

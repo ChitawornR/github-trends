@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import type { LanguageStatViewModel } from '@/src/presentation/view-models/language-stat.view-model'
 
@@ -33,6 +32,9 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   )
 }
 
+// h-72 = 288px — match this if the wrapper class changes
+const CHART_HEIGHT = 288
+
 export function LanguageChart({ stats }: LanguageChartProps) {
   const data = stats.map((s) => ({
     ...s,
@@ -40,14 +42,9 @@ export function LanguageChart({ stats }: LanguageChartProps) {
     value: s.percentage,
   }))
 
-  // ResponsiveContainer cannot measure dimensions during SSR — render only after mount.
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
-
   return (
     <div className="h-72 w-full" role="img" aria-label="Language popularity pie chart">
-      {mounted && (
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={CHART_HEIGHT} minWidth={0}>
         <PieChart>
           <Pie
             data={data}
@@ -71,7 +68,6 @@ export function LanguageChart({ stats }: LanguageChartProps) {
           />
         </PieChart>
       </ResponsiveContainer>
-      )}
     </div>
   )
 }
