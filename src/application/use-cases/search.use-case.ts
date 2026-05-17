@@ -84,10 +84,25 @@ export class SearchUseCase {
       const owner = await this.githubRepo.getUserOrOrg(query)
 
       if (owner !== null) {
-        const [repos, nameMatches] = await Promise.all([
-          this.githubRepo.getRepositoriesByUser(query),
+        const [reposSettled, nameMatchesSettled] = await Promise.allSettled([
+          this.githubRepo.getRepositoriesByUser(query, owner.type),
           this.githubRepo.searchRepositoriesByName(query),
         ])
+
+        for (const settled of [reposSettled, nameMatchesSettled]) {
+          if (settled.status === 'rejected' && settled.reason instanceof RateLimitError) {
+            return err(settled.reason)
+          }
+        }
+
+        const repos = reposSettled.status === 'fulfilled' ? reposSettled.value : null
+        const nameMatches = nameMatchesSettled.status === 'fulfilled' ? nameMatchesSettled.value : []
+
+        // Owner repos inaccessible (e.g. suspended/restricted org) — degrade to name search
+        if (repos === null) {
+          return ok({ kind: 'repo-list', repositories: nameMatches.map(toRepositoryDto) })
+        }
+
         const ownedIds = new Set(repos.map((r) => r.id))
         return ok({
           kind: 'owner-repos',
@@ -100,7 +115,7 @@ export class SearchUseCase {
       }
     } catch (cause) {
       if (cause instanceof RateLimitError) return err(cause)
-      console.error('[SearchUseCase] getUserOrOrg/getRepositoriesByUser error', cause)
+      console.error('[SearchUseCase] getUserOrOrg error', cause)
       return err(new InternalError())
     }
 

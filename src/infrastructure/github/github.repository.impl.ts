@@ -1,6 +1,7 @@
 import type { IGithubRepository } from '@/src/domain/repositories/github.repository'
 import type { GithubRepository } from '@/src/domain/entities/repository.entity'
 import type { GithubOwner } from '@/src/domain/entities/owner.entity'
+import type { OwnerType } from '@/src/domain/entities/owner.entity'
 import type {
   RawLanguageCountResponse,
   RawSearchRepositoriesResponse,
@@ -90,9 +91,10 @@ export class GithubRepositoryImpl implements IGithubRepository {
     return GithubMapper.toOwnerFromRawUser(result)
   }
 
-  async getRepositoriesByUser(username: string): Promise<GithubRepository[]> {
+  async getRepositoriesByUser(username: string, ownerType: OwnerType): Promise<GithubRepository[]> {
     const encodedUser = encodeURIComponent(username)
-    const path = `/search/repositories?q=user:${encodedUser}&sort=stars&order=desc&per_page=${PER_PAGE.USER_REPOS}`
+    const qualifier = ownerType === 'Organization' ? 'org' : 'user'
+    const path = `/search/repositories?q=${qualifier}:${encodedUser}&sort=stars&order=desc&per_page=${PER_PAGE.USER_REPOS}`
     const response = await this.client.get<RawSearchRepositoriesResponse>(
       path,
       REVALIDATE.SEARCH,

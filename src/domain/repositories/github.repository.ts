@@ -1,5 +1,5 @@
 import type { GithubRepository } from '@/src/domain/entities/repository.entity'
-import type { GithubOwner } from '@/src/domain/entities/owner.entity'
+import type { GithubOwner, OwnerType } from '@/src/domain/entities/owner.entity'
 
 /**
  * Port interface for GitHub data access.
@@ -41,8 +41,9 @@ export interface IGithubRepository {
 
   /**
    * Returns repositories belonging to a user or organisation, sorted by stars.
+   * @param ownerType determines whether to use `user:` or `org:` qualifier in the search query
    */
-  getRepositoriesByUser(username: string): Promise<GithubRepository[]>
+  getRepositoriesByUser(username: string, ownerType: OwnerType): Promise<GithubRepository[]>
 
   /**
    * Searches repositories by name/keyword.
