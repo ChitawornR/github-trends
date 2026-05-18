@@ -145,9 +145,6 @@ search query), and **API rate limit** (banner with reset time).
   instead of a simple repo count, and let the user pick the language set.
 - **Caching layer** — a short-lived server cache (or GitHub conditional requests with
   `ETag`) to further reduce API usage and improve resilience to rate limits.
-- **Richer repository detail** — README preview, contributor list, language breakdown,
-  and a star-history chart.
-- **Dark mode** and persisted user preferences.
 
 ---
 
